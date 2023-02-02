@@ -1,0 +1,37 @@
+{
+  "files.exclude": {
+    "bin": true,
+    "dist": false,
+    "**/node_modules": false
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    // "**/.serverless/**": true,
+    "**/dist":true,
+    "**/.idea/**": true,
+    "**/notebooks/**": true
+  },
+  "editor.formatOnSave": true,
+  "[markdown]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[python]": {
+    "editor.insertSpaces": true,
+    "editor.tabSize": 4
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "typescript.preferences.importModuleSpecifier": "relative"
+  },
+  "eslint.validate": ["typescript", "javascript"],
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  /* settings for yarn workspace (https://github.com/typescript-eslint/typescript-eslint/issues/1723#issuecomment-619600955) */
+  "eslint.packageManager": "yarn",
+  "npm.packageManager": "yarn",
+  "eslint.workingDirectories": [{ "pattern": "./packages/*/" },{ "pattern": "./apps/*/" }],
+}

@@ -1,0 +1,66 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres
+    restart: always
+    container_name: dingo-local-postgres
+    environment:
+      POSTGRES_USER: $POSTGRES_USER
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+      POSTGRES_DB: $POSTGRES_DB
+    volumes:
+      - ./pgdata:/var/lib/postgresql
+    ports:
+      - $POSTGRES_PORT:5432
+    networks:
+      - core-api-network
+
+  db-migration:
+    build:
+      context: .
+      dockerfile: Dockerfile.core-api
+    container_name: db-migration
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+    volumes:
+      - .:/app
+    # for local dev environment
+    # env_file:
+    #   - ./apps/core-api/.env
+    depends_on: ["postgres"]
+    entrypoint: ["sh", "-c", "yarn db:migrate;"]
+    profiles: ["db-migration"]  # service is only enabled when run with --profile migration
+    networks:
+      - core-api-network
+  core-api:
+    build:
+      context: .
+      dockerfile: Dockerfile.core-api
+    container_name: dingo-core-api
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+    volumes:
+      - .:/app
+    ports:
+      - $APP_PORT:$APP_PORT
+    # for local dev environment
+    # env_file:
+    #   - ./apps/core-api/.env
+    depends_on:
+      db-migration:
+        condition: service_completed_successfully
+    profiles: ["api"] # service is only enabled when run with --profile api
+    networks:
+      - core-api-network
+
+  plantuml:
+    image: plantuml/plantuml-server:jetty
+    ports:
+      - 8080:8080
+
+networks:
+  core-api-network:
+    driver: bridge
